@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -13,6 +14,7 @@ public class DriverOP_7416 extends LinearOpMode {
     private DcMotor left_drive = null;
     private DcMotor right_drive = null;
     private DcMotor lift = null;
+    private Servo dropper = null;
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
@@ -21,6 +23,7 @@ public class DriverOP_7416 extends LinearOpMode {
         left_drive = hardwareMap.get(DcMotor.class, "left_drive");
         right_drive = hardwareMap.get(DcMotor.class, "right_drive");
         lift = hardwareMap.get(DcMotor.class, "lift");
+        dropper = hardwareMap.get(Servo.class, "dropper");
 
         lift.setDirection(DcMotorSimple.Direction.FORWARD);
         right_drive.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -34,6 +37,12 @@ public class DriverOP_7416 extends LinearOpMode {
             }
             if (gamepad2.right_stick_y != 0) {
                 lift.setPower(Range.clip(gamepad2.right_stick_y, -1.0, 1.0));
+            }
+            //will need to fix once we see what is wrong. works but numbers for position will need to change.
+            if (gamepad2.a) {
+                dropper.setPosition(1.0);
+                sleep(2000);
+                dropper.setPosition(0.0);
             }
         }
     }
