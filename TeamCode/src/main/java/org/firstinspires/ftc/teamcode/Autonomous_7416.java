@@ -34,22 +34,30 @@ public class Autonomous_7416 extends LinearOpMode {
     VuforiaLocalizer vuforia;
     public static final String TAG = "Vuforia Navigation Sample";
     OpenGLMatrix lastLocation = null;
-
+    private ElapsedTime runtime = new ElapsedTime();
+    private DcMotor left_drive = null;
+    private DcMotor right_drive = null;
+    private DcMotor lift = null;
+    private Servo dropper = null;
     @Override
     public void runOpMode() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-        parameters.vuforiaLicenseKey = "AUle3wv/////AAABmSmoh4Hfwk38krsGN1iPH1kcyBfMIEhxiUW/jU/xyi5aqeOURNEZECajV+LauVHgOad+zBbsyLNvXmiXGhlXR1LsygjF2psyTt+Hy9aFmtGe1V8EyimSfCD92bZLObcusGOOC2PBIEwTKHBGTO+GrSYcPJCGoNJvxu3DAGvoDZqeOeXgQXJex1RzPoSJ/FlQh/4+6TolRwUzMmcon5w7Ud4OycBp1Xt4VB2UAhs4b4h3DjDF+eMhAwpqzrVwX7dG4JeTN7I/6pvD1rssnnDXqWWV53nV6FVFn7hRMQpr2ovJvA5fWFIMRG/emuRP+efYSpxTahC6deLqw+mmrYm34ps9Uzcyfa13GPAeyGAginz0";
+        parameters.vuforiaLicenseKey = "AW5cuAv/////AAAAGYwNILq1OU9al3sfWEE5bcaICmP0eurTfet/MBdtqccaDPUeboEWlVB11qhifLo+6Co5JJ/QCme2qocAtIGwiqen3MPNv3knzWjYnCR9bEAvn7lUb4Mq/lSPZf6zT/Lm2jRriRM9K+/YJdzJbtlj991eAI8jg0PqjLnS0WoT2keQ6C64PjBEqzOVA9QeKciad4SeX//YwTYi/V2ffB2ukVLJqTBu/bFUnGScYTfL6w8jbkMqETQG5bV00DasZXa7NEVgIbP5Zq/fo6wApIFpVomMlLoHc6Aqm/CSVjjithl63B5cnvMMGEVtVgKRUkxwPJHVaeerebihIsfzriHPy9/isYEdUC4IHRcJ5PEnbZVI";
         parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
-        VuforiaTrackables stonesAndChips = this.vuforia.loadTrackablesFromAsset("StonesAndChips");
+        VuforiaTrackables stonesAndChips = this.vuforia.loadTrackablesFromAsset("RoverRuckus");
         VuforiaTrackable redTarget = stonesAndChips.get(0);
-        redTarget.setName("RedTarget");  // Stones
+        redTarget.setName("BluePerimeter");  // Stones
         VuforiaTrackable blueTarget  = stonesAndChips.get(1);
-        blueTarget.setName("BlueTarget");  // Chips
+        blueTarget.setName("RedPerimeter");  // Chips
+        VuforiaTrackable frontWall = stonesAndChips.get(2);
+        frontWall.setName("FrontPerimeter");  // Stones
+        VuforiaTrackable backWall  = stonesAndChips.get(3);
+        backWall.setName("BackPerimeter");  // Chips+
         List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
         allTrackables.addAll(stonesAndChips);
-        
+
         float mmPerInch        = 25.4f;
         float mmBotWidth       = 18 * mmPerInch;            // ... or whatever is right for your robot
         float mmFTCFieldWidth  = (12*12 - 2) * mmPerInch;   // the FTC field is ~11'10" center-to-center of the glass panels
@@ -80,6 +88,28 @@ public class Autonomous_7416 extends LinearOpMode {
                         AngleUnit.DEGREES, 90, 0, 0));
         blueTarget.setLocation(blueTargetLocationOnField);
         RobotLog.ii(TAG, "Blue Target=%s", format(blueTargetLocationOnField));
+
+        OpenGLMatrix frontWallLocationOnField = OpenGLMatrix
+                /* Then we translate the target off to the RED WALL. Our translation here
+                is a negative translation in X.*/
+                .translation(-mmFTCFieldWidth/2, 0, 0)
+                .multiplied(Orientation.getRotationMatrix(
+                        /* First, in the fixed (field) coordinate system, we rotate 90deg in X, then 90 in Z */
+                        AxesReference.EXTRINSIC, AxesOrder.XZX,
+                        AngleUnit.DEGREES, 90, 90, 0));
+        redTarget.setLocation(frontWallLocationOnField);
+        RobotLog.ii(TAG, "Front Target=%s", format(frontWallLocationOnField));
+
+        OpenGLMatrix backWallLocationOnField = OpenGLMatrix
+                /* Then we translate the target off to the RED WALL. Our translation here
+                is a negative translation in X.*/
+                .translation(-mmFTCFieldWidth/2, 0, 0)
+                .multiplied(Orientation.getRotationMatrix(
+                        /* First, in the fixed (field) coordinate system, we rotate 90deg in X, then 90 in Z */
+                        AxesReference.EXTRINSIC, AxesOrder.XZX,
+                        AngleUnit.DEGREES, 90, 90, 0));
+        redTarget.setLocation(backWallLocationOnField);
+        RobotLog.ii(TAG, "Front Target=%s", format(backWallLocationOnField));
 
         OpenGLMatrix phoneLocationOnRobot = OpenGLMatrix
                 .translation(mmBotWidth/2,0,0)
