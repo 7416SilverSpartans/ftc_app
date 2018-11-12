@@ -126,7 +126,8 @@ public class Autonomous_7416 extends LinearOpMode {
         stonesAndChips.activate();
 
         while (opModeIsActive()) {
-
+            boolean found = false;
+            String name = "";
             for (VuforiaTrackable trackable : allTrackables) {
                 telemetry.addData(trackable.getName(), ((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible() ? "Visible" : "Not Visible");    //
 
@@ -134,10 +135,43 @@ public class Autonomous_7416 extends LinearOpMode {
                 if (robotLocationTransform != null) {
                     lastLocation = robotLocationTransform;
                 }
+                if (!((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible()) {
+                    left_drive.setPower(0.2);
+                    right_drive.setPower(-0.2);
+                } else {
+                    found = true;
+                    name = trackable.getName();
+                    break;
+                }
             }
             if (lastLocation != null) {
                 //  RobotLog.vv(TAG, "robot=%s", format(lastLocation));
-                telemetry.addData("Pos", format(lastLocation));
+                String coordinatesStr = format(lastLocation).replace("{EXTRINSIC XYZ 0 67 45} {-345.67 76.66 -123.25} ", "");
+                String[] coordinatesArray = coordinatesStr.split("[ ]");
+                String x = coordinatesArray[5].replace("{", "");
+                String y = coordinatesArray[6];
+                String z = coordinatesArray[7].replace("}", "");
+                //for (int i = 0; i <= xyz_unparsed.length; i++) {
+                   // xyz[i] = Integer.parseInt(xyz_unparsed[i]);
+                //}
+
+                telemetry.addData("x", x);
+                telemetry.addData("y", y);
+                telemetry.addData("z", z);
+
+                left_drive = hardwareMap.get(DcMotor.class, "left_drive");
+                right_drive = hardwareMap.get(DcMotor.class, "right_drive");
+                left_drive.setDirection(DcMotorSimple.Direction.FORWARD);
+                right_drive.setDirection(DcMotorSimple.Direction.REVERSE);
+                if (found) {
+                    if (name.equals("BluePerimeter")) {
+                        left_drive.setPower(1.0);
+                        right_drive.setPower(1.0);
+                        sleep(500);
+                        left_drive.setPower(0);
+                        right_drive.setPower(0);
+                    }
+                }
             } else {
                 telemetry.addData("Pos", "Unknown");
             }

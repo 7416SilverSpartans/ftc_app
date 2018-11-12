@@ -15,6 +15,7 @@ public class DriverOP_7416 extends LinearOpMode {
     private DcMotor right_drive = null;
     private DcMotor lift = null;
     private Servo dropper = null;
+    private DcMotor sweeper = null;
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -23,10 +24,12 @@ public class DriverOP_7416 extends LinearOpMode {
         right_drive = hardwareMap.get(DcMotor.class, "right_drive");
         lift = hardwareMap.get(DcMotor.class, "lift");
         dropper = hardwareMap.get(Servo.class, "dropper");
+        sweeper = hardwareMap.get(DcMotor.class, "sweeper");
 
         lift.setDirection(DcMotorSimple.Direction.FORWARD);
         right_drive.setDirection(DcMotorSimple.Direction.REVERSE);
         left_drive.setDirection(DcMotorSimple.Direction.FORWARD);
+        sweeper.setDirection(DcMotorSimple.Direction.FORWARD);
         waitForStart();
         while(opModeIsActive()) {
             if (gamepad1.left_stick_y != 0) {
@@ -46,6 +49,16 @@ public class DriverOP_7416 extends LinearOpMode {
             if (gamepad2.a) {
                 dropper.setPosition(1.0);
                 dropper.setPosition(0.0);
+            }
+            if (gamepad2.b) {
+                sweeper.setPower(1.0);
+            } else if (gamepad2.b == false){
+                sweeper.setPower(0);
+            }
+            if (gamepad2.x) {
+                sweeper.setPower(-1.0);
+            } else if (gamepad2.x == false) {
+                sweeper.setPower(0);
             }
         }
     }
