@@ -124,10 +124,11 @@ public class Autonomous_7416 extends LinearOpMode {
         telemetry.update();
         waitForStart();
         stonesAndChips.activate();
-
+        left_drive = hardwareMap.get(DcMotor.class, "left_drive");
+        right_drive = hardwareMap.get(DcMotor.class, "right_drive");
+        left_drive.setDirection(DcMotorSimple.Direction.FORWARD);
+        right_drive.setDirection(DcMotorSimple.Direction.REVERSE);
         while (opModeIsActive()) {
-            boolean found = false;
-            String name = "";
             for (VuforiaTrackable trackable : allTrackables) {
                 telemetry.addData(trackable.getName(), ((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible() ? "Visible" : "Not Visible");    //
 
@@ -158,11 +159,6 @@ public class Autonomous_7416 extends LinearOpMode {
                 telemetry.addData("x", x);
                 telemetry.addData("y", y);
                 telemetry.addData("z", z);
-
-                left_drive = hardwareMap.get(DcMotor.class, "left_drive");
-                right_drive = hardwareMap.get(DcMotor.class, "right_drive");
-                left_drive.setDirection(DcMotorSimple.Direction.FORWARD);
-                right_drive.setDirection(DcMotorSimple.Direction.REVERSE);
                 if (found) {
                     if (name.equals("BluePerimeter")) {
                         left_drive.setPower(1.0);
