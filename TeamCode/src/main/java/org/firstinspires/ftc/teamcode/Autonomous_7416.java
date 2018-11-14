@@ -140,8 +140,8 @@ public class Autonomous_7416 extends LinearOpMode {
                     lastLocation = robotLocationTransform;
                 }
                 if (!((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible()) {
-                    left_drive.setPower(0.2);
-                    right_drive.setPower(-0.2);
+                    left_drive.setPower(0.5);
+                    right_drive.setPower(-0.5);
                 } else {
                     found = true;
                     name = trackable.getName();
