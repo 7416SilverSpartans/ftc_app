@@ -130,6 +130,7 @@ public class Autonomous_7416 extends LinearOpMode {
         right_drive.setDirection(DcMotorSimple.Direction.REVERSE);
         while (opModeIsActive()) {
             for (VuforiaTrackable trackable : allTrackables) {
+                telemetry.addData("test", !((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible());
                 telemetry.addData(trackable.getName(), ((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible() ? "Visible" : "Not Visible");    //
 
                 OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener) trackable.getListener()).getUpdatedRobotLocation();
