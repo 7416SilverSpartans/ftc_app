@@ -27,8 +27,8 @@ public class DriverOP_7416 extends LinearOpMode {
         sweeper = hardwareMap.get(DcMotor.class, "sweeper");
 
         lift.setDirection(DcMotorSimple.Direction.FORWARD);
-        right_drive.setDirection(DcMotorSimple.Direction.REVERSE);
-        left_drive.setDirection(DcMotorSimple.Direction.FORWARD);
+        right_drive.setDirection(DcMotorSimple.Direction.FORWARD);
+        left_drive.setDirection(DcMotorSimple.Direction.REVERSE );
         sweeper.setDirection(DcMotorSimple.Direction.FORWARD);
         waitForStart();
         while(opModeIsActive()) {
@@ -42,8 +42,10 @@ public class DriverOP_7416 extends LinearOpMode {
             } else {
                 right_drive.setPower(0);
             }
-            if (gamepad2.right_stick_y != 0) {
-                lift.setPower(Range.clip(gamepad2.right_stick_y, -1.0, 1.0));
+            if (gamepad2.right_stick_y >= 0.5) {
+                lift.setPower(0.5);
+            } else {
+                lift.setPower(0);
             }
             //will need to fix once we see what is wrong. works but numbers for position will need to change.
             if (gamepad2.a) {

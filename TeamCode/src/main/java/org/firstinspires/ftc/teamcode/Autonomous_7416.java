@@ -163,13 +163,11 @@ public class Autonomous_7416 extends LinearOpMode {
                 telemetry.addData("y", y);
                 telemetry.addData("z", z);
                 if (found) {
-                    if (name.equals("BluePerimeter")) {
-                        left_drive.setPower(1.0);
-                        right_drive.setPower(1.0);
-                        sleep(500);
-                        left_drive.setPower(0);
-                        right_drive.setPower(0);
-                    }
+                    left_drive.setPower(1.0);
+                    right_drive.setPower(1.0);
+                    sleep(500);
+                    left_drive.setPower(0);
+                    right_drive.setPower(0);
                 }
             } else {
                 telemetry.addData("Pos", "Unknown");
