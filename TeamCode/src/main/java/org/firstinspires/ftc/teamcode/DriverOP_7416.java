@@ -11,56 +11,72 @@ import com.qualcomm.robotcore.util.Range;
 @TeleOp(name="Driver Op", group="Linear Opmode")
 public class DriverOP_7416 extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor left_drive = null;
-    private DcMotor right_drive = null;
+    private DcMotor left_front_drive = null;
+    private DcMotor right_front_drive = null;
+    private DcMotor left_back_drive = null;
+    private DcMotor right_back_drive = null;
+    private DcMotor arm = null;
+    private Servo left_door = null;
+    private Servo right_door = null;
     private DcMotor lift = null;
-    private Servo dropper = null;
-    private DcMotor sweeper = null;
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        left_drive = hardwareMap.get(DcMotor.class, "left_drive");
-        right_drive = hardwareMap.get(DcMotor.class, "right_drive");
-        lift = hardwareMap.get(DcMotor.class, "lift");
-        dropper = hardwareMap.get(Servo.class, "dropper");
-        sweeper = hardwareMap.get(DcMotor.class, "sweeper");
+        left_front_drive = hardwareMap.get(DcMotor.class, "left_front_drive");
+        right_front_drive = hardwareMap.get(DcMotor.class, "right_front_drive");
+        left_back_drive = hardwareMap.get(DcMotor.class, "left_back_drive");
+        right_back_drive = hardwareMap.get(DcMotor.class, "right_back_drive");
+        arm = hardwareMap.get(DcMotor.class, "aarm");
+        left_door = hardwareMap.get(Servo.class, "left_door");
+        right_door = hardwareMap.get(Servo.class, "right_door");
 
+        lift = hardwareMap.get(DcMotor.class, "lift");
+
+        arm.setDirection(DcMotorSimple.Direction.FORWARD);
+        right_front_drive.setDirection(DcMotorSimple.Direction.REVERSE);
+        right_back_drive.setDirection(DcMotorSimple.Direction.REVERSE);
+        left_front_drive.setDirection(DcMotorSimple.Direction.FORWARD);
+        left_back_drive.setDirection(DcMotorSimple.Direction.FORWARD);
         lift.setDirection(DcMotorSimple.Direction.FORWARD);
-        right_drive.setDirection(DcMotorSimple.Direction.FORWARD);
-        left_drive.setDirection(DcMotorSimple.Direction.REVERSE );
-        sweeper.setDirection(DcMotorSimple.Direction.FORWARD);
         waitForStart();
         while(opModeIsActive()) {
             if (gamepad1.left_stick_y != 0) {
-                left_drive.setPower(Range.clip(gamepad1.left_stick_y, -1.0, 1.0));
+                left_front_drive.setPower(Range.clip(gamepad1.left_stick_y, -1.0, 1.0));
+                left_back_drive.setPower(Range.clip(gamepad1.left_stick_y, -1.0, 1.0));
             } else {
-                left_drive.setPower(0);
+                left_front_drive.setPower(0);
+                left_back_drive.setPower(0);
             }
             if (gamepad1.right_stick_y != 0) {
-                right_drive.setPower(Range.clip(gamepad1.right_stick_y, -1.0, 1.0));
+                right_front_drive.setPower(Range.clip(gamepad1.right_stick_y, -1.0, 1.0));
+                right_back_drive.setPower(Range.clip(gamepad1.right_stick_y, -1.0, 1.0));
             } else {
-                right_drive.setPower(0);
+                right_front_drive.setPower(0);
+                right_back_drive.setPower(0);
             }
             if (gamepad2.right_stick_y >= 0.5) {
-                lift.setPower(0.5);
+                arm.setPower(Range.clip(gamepad2.right_stick_y, -1.0, 1.0));
             } else {
-                lift.setPower(0);
+                arm.setPower(0);
             }
             //will need to fix once we see what is wrong. works but numbers for position will need to change.
             if (gamepad2.a) {
-                dropper.setPosition(1.0);
-                dropper.setPosition(0.0);
+                left_door.setPosition(1.0);
+                right_door.setPosition(0);
+            } else {
+                left_door.setPosition(0);
+                right_door.setPosition(1.0);
             }
             if (gamepad2.b) {
-                sweeper.setPower(1.0);
-            } else if (gamepad2.b == false){
-                sweeper.setPower(0);
+                lift.setPower(1.0);
+            } else if (!gamepad2.b){
+                lift.setPower(0);
             }
             if (gamepad2.x) {
-                sweeper.setPower(-1.0);
-            } else if (gamepad2.x == false) {
-                sweeper.setPower(0);
+                lift.setPower(-1.0);
+            } else if (!gamepad2.x) {
+                lift.setPower(0);
             }
         }
     }
