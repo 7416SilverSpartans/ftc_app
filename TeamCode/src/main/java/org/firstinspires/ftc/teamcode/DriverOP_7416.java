@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -19,10 +21,10 @@ public class DriverOP_7416 extends LinearOpMode {
     private Servo left_door = null;
     private Servo right_door = null;
     private DcMotor lift = null;
+    private DcMotor latch = null;
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-
         left_front_drive = hardwareMap.get(DcMotor.class, "left_front_drive");
         right_front_drive = hardwareMap.get(DcMotor.class, "right_front_drive");
         left_back_drive = hardwareMap.get(DcMotor.class, "left_back_drive");
@@ -32,13 +34,15 @@ public class DriverOP_7416 extends LinearOpMode {
         right_door = hardwareMap.get(Servo.class, "right_door");
 
         lift = hardwareMap.get(DcMotor.class, "lift");
+        latch = hardwareMap.get(DcMotor.class, "latch");
 
-        arm.setDirection(DcMotorSimple.Direction.FORWARD);
+        arm.setDirection(DcMotorSimple.Direction.REVERSE);
         right_front_drive.setDirection(DcMotorSimple.Direction.REVERSE);
         right_back_drive.setDirection(DcMotorSimple.Direction.REVERSE);
         left_front_drive.setDirection(DcMotorSimple.Direction.FORWARD);
         left_back_drive.setDirection(DcMotorSimple.Direction.FORWARD);
         lift.setDirection(DcMotorSimple.Direction.FORWARD);
+        latch.setDirection(DcMotorSimple.Direction.FORWARD);
         waitForStart();
         while(opModeIsActive()) {
             if (gamepad1.left_stick_y != 0) {
@@ -55,7 +59,7 @@ public class DriverOP_7416 extends LinearOpMode {
                 right_front_drive.setPower(0);
                 right_back_drive.setPower(0);
             }
-            if (gamepad2.right_stick_y >= 0.5) {
+            if (gamepad2.right_stick_y >= 0.5 || gamepad2.right_stick_y <= -0.5) {
                 arm.setPower(Range.clip(gamepad2.right_stick_y, -1.0, 1.0));
             } else {
                 arm.setPower(0);
@@ -64,10 +68,17 @@ public class DriverOP_7416 extends LinearOpMode {
             if (gamepad2.a) {
                 left_door.setPosition(1.0);
                 right_door.setPosition(0);
+                telemetry.addData("right Door Pos", right_door.getPosition());
+                telemetry.addData("left Door Pos", left_door.getPosition());
             } else {
                 left_door.setPosition(0);
                 right_door.setPosition(1.0);
+                telemetry.addData("right Door Pos", right_door.getPosition());
+                telemetry.addData("left Door Pos", left_door.getPosition());
             }
+
+
+
             if (gamepad2.b) {
                 lift.setPower(1.0);
             } else if (!gamepad2.b){
@@ -78,6 +89,17 @@ public class DriverOP_7416 extends LinearOpMode {
             } else if (!gamepad2.x) {
                 lift.setPower(0);
             }
+            if (gamepad2.dpad_up) {
+                latch.setPower(-1.0);
+            } else {
+                latch.setPower(0);
+            }
+            if (gamepad2.dpad_down) {
+                latch.setPower(1.0);
+            } else {
+                latch.setPower(0);
+            }
+            telemetry.update();
         }
     }
 }

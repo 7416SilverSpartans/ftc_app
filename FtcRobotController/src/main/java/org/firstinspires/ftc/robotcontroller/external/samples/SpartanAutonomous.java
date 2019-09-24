@@ -1,4 +1,6 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.robotcontroller.external.samples;
+
+
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -28,8 +30,8 @@ import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-@Autonomous(name="Autonomous 7416", group="Autonomous Opmode")
-public class Autonomous_7416 extends LinearOpMode {
+@Autonomous(name="2Autonomous 7416", group="Autonomous Opmode")
+public class SpartanAutonomous extends LinearOpMode {
 
     VuforiaLocalizer vuforia;
     public static final String TAG = "Vuforia Navigation Sample";
@@ -189,3 +191,4 @@ public class Autonomous_7416 extends LinearOpMode {
         return transformationMatrix.formatAsTransform();
     }
 }
+
